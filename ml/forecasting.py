@@ -11,7 +11,6 @@ monthly_revenue = pd.read_sql_query("""
 """, conn)
 conn.close()
 
-# Convert month string to datetime and rename columns as required by Prophet
 monthly_revenue['ds'] = pd.to_datetime(monthly_revenue['month'] + "-01")
 monthly_revenue.rename(columns={'net_revenue': 'y'}, inplace=True)
 monthly_revenue = monthly_revenue[['ds', 'y']]
@@ -22,11 +21,10 @@ print(monthly_revenue.head())
 from prophet import Prophet
 import matplotlib.pyplot as plt
 
-# Initialize and fit the Prophet model
+# Initialize the model
 model = Prophet()
 model.fit(monthly_revenue)
 
-# Create a DataFrame for future dates (e.g., next 6 months)
 future = model.make_future_dataframe(periods=6, freq='M')
 forecast = model.predict(future)
 
@@ -36,7 +34,5 @@ plt.title("Revenue Forecast using Prophet")
 plt.xlabel("Date")
 plt.ylabel("Net Revenue")
 plt.show()
-
-# Plot forecast components
 fig2 = model.plot_components(forecast)
 plt.show()
