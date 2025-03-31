@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 # Connect to the SQLite database
 conn = sqlite3.connect("sports_bi.db")
 
-# Load sessions and users data
 sessions = pd.read_sql_query("""
     SELECT user_id, AVG(duration_minutes) AS avg_duration, COUNT(*) AS session_count
     FROM sessions
@@ -16,14 +15,11 @@ sessions = pd.read_sql_query("""
 users = pd.read_sql_query("SELECT * FROM users", conn)
 conn.close()
 
-# Merge data on user_id to form a complete DataFrame for segmentation
 data = pd.merge(users, sessions, on="user_id", how="left")
 data.fillna({'avg_duration': 0, 'session_count': 0}, inplace=True)
-
-# Use engagement features for clustering
 X_cluster = data[['session_count', 'avg_duration']]
 
-# Determine the optimal number of clusters using the Elbow Method
+# Using elbow method
 wcss = []
 for i in range(1, 10):
     kmeans = KMeans(n_clusters=i, random_state=42)
@@ -37,7 +33,6 @@ plt.xlabel("Number of Clusters")
 plt.ylabel("WCSS")
 plt.show()
 
-# Choose, for example, 3 clusters
 kmeans = KMeans(n_clusters=3, random_state=42)
 data['cluster'] = kmeans.fit_predict(X_cluster)
 
