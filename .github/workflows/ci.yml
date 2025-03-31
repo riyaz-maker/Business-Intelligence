@@ -1,0 +1,48 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4: Run ETL pipeline
+      - name: Run ETL pipeline
+        run: python main.py
+
+      # Step 5: Run SQL queries to generate KPI reports
+      - name: Run SQL queries
+        run: python queries/run_queries.py
+
+      # Step 6: Run Prophet Scripting
+      - name: Run Forecasting
+        run: python ml/forecasting.py
+
+      # Step 7: Run Churn Prediction model script
+      - name: Run Churn Prediction
+        run: python ml/churn_prediction.py
+
+      # Step 8: Run Segmentation (KMeans clustering)
+      - name: Run Segmentation
+        run: python ml/segmentation.py
