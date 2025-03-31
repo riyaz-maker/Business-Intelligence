@@ -1,6 +1,6 @@
 import pandas as pd
 
-def load_raw_data(data_dir="sports_bi_datasets.zip"):
+def load_raw_data(data_dir="data"):
     users = pd.read_csv(f"{data_dir}/users.csv")
     bookings = pd.read_csv(f"{data_dir}/bookings.csv")
     revenue = pd.read_csv(f"{data_dir}/revenue.csv")
